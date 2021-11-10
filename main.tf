@@ -48,9 +48,30 @@ resource "aws_api_gateway_rest_api" "event" {
   name = "event"
 }
 
-resource "aws_api_gateway_get" "event" {
+resource "aws_api_gateway_method" "event" {
   rest_api_id   = aws_api_gateway_rest_api.event.id
   resource_id   = aws_api_gateway_resource.event.id
   http_method   = "GET"
   authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "event" {
+  rest_api_id             = aws_api_gateway_rest_api.event.id
+  resource_id             = aws_api_gateway_resource.event.id
+  http_method             = aws_api_gateway_method.event.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/functions/${aws_lambda_function.event.arn}/invocations"
+}
+
+resource "aws_api_gateway_deployment" "event_v1" {
+  # depends_on = [
+  #   "aws_api_gateway_integration.event"
+  # ]
+  rest_api_id = aws_api_gateway_rest_api.event.id
+  stage_name  = "v1"
+}
+
+output "url" {
+  value = "${aws_api_gateway_deployment.event_v1.invoke_url}${aws_api_gateway_resource.event.path}"
 }

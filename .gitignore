@@ -16,3 +16,6 @@
 
 secret.tfvars
 /.vscode
+/.terraform
+**/main
+**/main.zip
