@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1"
+  region     = "us-east-1"
   access_key = var.aws_access_key_id
   secret_key = var.aws_secret_access_key
 }
@@ -23,7 +23,7 @@ resource "aws_iam_role" "event" {
   name               = "event"
   assume_role_policy = <<EOF
 {
-    "Version": "2021-11-10",
+    "Version": "2012-10-17",
     "Statement": {
         "Action": "sts:AssumeRole",
         "Principal": {
@@ -67,13 +67,13 @@ resource "aws_api_gateway_integration" "event" {
   http_method             = aws_api_gateway_method.event.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/functions/${aws_lambda_function.event.arn}/invocations"
+  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/2015-03-31/functions/${aws_lambda_function.event.arn}/invocations"
 }
 
 resource "aws_api_gateway_deployment" "event_v1" {
-  # depends_on = [
-  #   "aws_api_gateway_integration.event"
-  # ]
+  depends_on = [
+    aws_api_gateway_integration.event
+  ]
   rest_api_id = aws_api_gateway_rest_api.event.id
   stage_name  = "v1"
 }
