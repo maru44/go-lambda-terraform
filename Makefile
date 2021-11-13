@@ -13,4 +13,4 @@ build:
 
 zip:
 	@echo "zip"
-	@zip ./zip/main.zip ./bin/main
+	@zip ./main.zip ./bin/main
