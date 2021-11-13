@@ -19,3 +19,5 @@ secret.tfvars
 /.terraform
 **/main
 **/main.zip
+terraform.tfstate
+terraform.tfstate.backup
