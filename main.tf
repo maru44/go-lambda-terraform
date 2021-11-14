@@ -11,7 +11,7 @@ resource "aws_lambda_function" "event" {
   function_name    = "event"
   filename         = "main.zip"
   handler          = "event"
-  source_code_hash = sha256(filebase64("main.zip"))
+  source_code_hash = filebase64sha256("main.zip")
   role             = aws_iam_role.event.arn
   runtime          = "go1.x"
   memory_size      = 128
