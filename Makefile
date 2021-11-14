@@ -9,8 +9,8 @@ tf_apply:
 
 build:
 	@echo "build"
-	@go build -o ./bin/main ./main.go
+	@GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./main ./main.go
 
 zip:
 	@echo "zip"
-	@zip ./main.zip ./bin/main
+	@zip ./main.zip ./main

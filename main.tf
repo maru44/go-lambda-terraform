@@ -10,7 +10,7 @@ data "aws_region" "current" {}
 resource "aws_lambda_function" "event" {
   function_name    = "event"
   filename         = "main.zip"
-  handler          = "event"
+  handler          = "main"
   source_code_hash = filebase64sha256("main.zip")
   role             = aws_iam_role.event.arn
   runtime          = "go1.x"
@@ -39,7 +39,7 @@ EOF
 resource "aws_lambda_permission" "event" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.event.arn
+  function_name = aws_lambda_function.event.function_name
   principal     = "apigateway.amazonaws.com"
 }
 
@@ -67,7 +67,7 @@ resource "aws_api_gateway_integration" "event" {
   http_method             = aws_api_gateway_method.event.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/2015-03-31/functions/${aws_lambda_function.event.arn}/invocations"
+  uri                     = aws_lambda_function.event.invoke_arn
 }
 
 resource "aws_api_gateway_deployment" "event_v1" {
